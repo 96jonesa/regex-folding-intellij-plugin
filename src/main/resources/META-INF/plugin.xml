@@ -1,0 +1,62 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>com.example.regex-visual-replacer</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>Regex Visual Replacer</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor>96jonesa</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description><![CDATA[
+    Visually replaces specified regex patterns in files being viewed in the editor.
+  ]]></description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Register the settings configurable -->
+        <projectConfigurable
+                parentId="editor"
+                instance="com.example.regexvisualreplacer.RegexReplacementConfigurable"
+                id="regex.visual.replacer.settings"
+                displayName="Regex Visual Replacer"/>
+        
+        <!-- Register the application service -->
+        <applicationService
+                serviceImplementation="com.example.regexvisualreplacer.RegexReplacementService"/>
+                
+        <!-- Register the folding applier -->
+        <editorFactoryListener
+                implementation="com.example.regexvisualreplacer.RegexFoldingApplier"/>
+                
+    </extensions>
+    
+    <!-- Actions -->
+    <actions>
+        <action id="com.example.regexvisualreplacer.AddSampleRuleAction"
+                class="com.example.regexvisualreplacer.AddSampleRuleAction"
+                text="Add Sample Regex Rule"
+                description="Add a sample regex replacement rule for testing">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+        
+        <action id="com.example.regexvisualreplacer.ToggleRegexFoldingAction"
+                class="com.example.regexvisualreplacer.ToggleRegexFoldingAction"
+                text="Toggle Regex Folding"
+                description="Toggle folding/unfolding of all regex matching regions">
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift F"/>
+            <add-to-group group-id="EditorActions" anchor="last"/>
+            <add-to-group group-id="CodeMenu" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>
