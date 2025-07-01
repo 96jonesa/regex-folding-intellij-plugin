@@ -14,6 +14,17 @@ class RegexFoldingApplier : EditorFactoryListener {
     private val service = RegexReplacementService.getInstance()
     private val alarm = Alarm()
     
+    // Track our custom fold regions to distinguish them from IDE's built-in folding
+    private val customRegexFoldRanges = mutableSetOf<Pair<Int, Int>>()
+    
+    /**
+     * Check if a fold region is one of our custom regex-based fold regions
+     */
+    private fun isCustomRegexFoldRegion(foldRegion: com.intellij.openapi.editor.FoldRegion): Boolean {
+        val range = Pair(foldRegion.startOffset, foldRegion.endOffset)
+        return customRegexFoldRanges.contains(range)
+    }
+    
     override fun editorCreated(event: EditorFactoryEvent) {
         val editor = event.editor
         val file = editor.virtualFile
@@ -66,15 +77,19 @@ class RegexFoldingApplier : EditorFactoryListener {
         }
         
         foldingModel.runBatchFoldingOperation {
-            // Clear ALL existing custom fold regions (both valid and invalid ones)
+            // Only clear existing regex-based custom fold regions, preserve IDE's built-in folding
             val existingCustomRegions = foldingModel.allFoldRegions.filter { 
-                it.placeholderText == "..." 
+                it.placeholderText == "..." && isCustomRegexFoldRegion(it)
             }
-            println("RegexFoldingApplier: Found ${existingCustomRegions.size} existing custom fold regions to remove")
+            println("RegexFoldingApplier: Found ${existingCustomRegions.size} existing custom regex fold regions to remove")
             for (region in existingCustomRegions) {
                 try {
+                    // Remove from our tracking set
+                    val range = Pair(region.startOffset, region.endOffset)
+                    customRegexFoldRanges.remove(range)
+                    
                     foldingModel.removeFoldRegion(region)
-                    println("RegexFoldingApplier: Removed existing fold region")
+                    println("RegexFoldingApplier: Removed existing regex fold region")
                 } catch (e: Exception) {
                     println("RegexFoldingApplier: Failed to remove fold region: ${e.message}")
                 }
@@ -124,6 +139,9 @@ class RegexFoldingApplier : EditorFactoryListener {
                                     )
                                     
                                     if (foldRegion != null) {
+                                        // Track this as our custom regex fold region
+                                        customRegexFoldRanges.add(Pair(foldStart, foldEnd))
+                                        
                                         // Set properties to make folding more stable
                                         foldRegion.isExpanded = false
                                         
@@ -138,7 +156,7 @@ class RegexFoldingApplier : EditorFactoryListener {
                                         }
                                         
                                         success = true
-                                        println("RegexFoldingApplier: Successfully created and collapsed fold region")
+                                        println("RegexFoldingApplier: Successfully created and collapsed custom regex fold region")
                                     } else {
                                         println("RegexFoldingApplier: Failed to create fold region")
                                     }

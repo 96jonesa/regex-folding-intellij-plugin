@@ -11,6 +11,15 @@ class ToggleRegexFoldingAction : AnAction("Toggle Regex Folding") {
     
     private val service = RegexReplacementService.getInstance()
     
+    /**
+     * Check if a fold region is one of our custom regex-based fold regions
+     * by checking if its range matches any of the expected regex match ranges
+     */
+    private fun isCustomRegexFoldRegion(foldRegion: com.intellij.openapi.editor.FoldRegion, expectedRanges: List<Pair<Int, Int>>): Boolean {
+        val range = Pair(foldRegion.startOffset, foldRegion.endOffset)
+        return expectedRanges.contains(range)
+    }
+    
     override fun actionPerformed(e: AnActionEvent) {
         val editor = e.getData(CommonDataKeys.EDITOR) ?: return
         val project = e.project ?: return
@@ -42,9 +51,9 @@ class ToggleRegexFoldingAction : AnAction("Toggle Regex Folding") {
             val newFoldRegions = findAllMatchingRegions(editor)
             println("ToggleRegexFoldingAction: Found ${newFoldRegions.size} total matching regions in file")
             
-            // Find all existing custom fold regions
+            // Find all existing custom regex fold regions (only our custom ones)
             val existingCustomRegions = foldingModel.allFoldRegions.filter { 
-                it.placeholderText == "..." 
+                it.placeholderText == "..." && isCustomRegexFoldRegion(it, newFoldRegions)
             }
             
             println("ToggleRegexFoldingAction: Found ${existingCustomRegions.size} existing custom fold regions")
