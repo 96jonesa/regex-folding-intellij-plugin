@@ -25,15 +25,6 @@ out/
 .run
 .run/
 
-gradle
-gradle/
-
-gradlew
-gradlew.bat
-gradle.properties
-settings.gradle.kts
-build.gradle.kts
-
 .intellijPlatform
 .intellijPlatform/
 
