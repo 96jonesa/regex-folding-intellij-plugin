@@ -1,3 +1,5 @@
+**built entirely using Claude Code in an hour, I have not read a single line of this code, it just does what I want it to well enough for personal use**
+
 # Regex Visual Replacer Plugin
 
 An IntelliJ IDEA plugin that allows users to visually replace regular expression patterns in the editor without modifying the actual file content.
