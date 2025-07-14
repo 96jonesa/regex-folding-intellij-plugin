@@ -1,4 +1,7 @@
+# A note from the human in the loop
 **built entirely using Claude Code in an hour, I have not read a single line of this code or the README, it just does what I want it to well enough for personal use** - I may polish and publish this eventually
+
+This plugin allows the user to specify regular expressions that, when a hot-key is pressed, will be folded (minimized) / un-folded. I mostly use this to fold multi-line logging and metric emissions statements when I'm reading business logic
 
 # Regex Visual Replacer Plugin
 
