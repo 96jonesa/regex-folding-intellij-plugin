@@ -1,4 +1,4 @@
-**built entirely using Claude Code in an hour, I have not read a single line of this code, it just does what I want it to well enough for personal use**
+**built entirely using Claude Code in an hour, I have not read a single line of this code or the README, it just does what I want it to well enough for personal use** - I may polish and publish this eventually
 
 # Regex Visual Replacer Plugin
 
